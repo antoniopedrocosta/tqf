@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Qualitative Farmer — Caderno de Campo</title>
+<meta name="description" content="Caderno de campo interativo: checklists, exercícios e assistentes metodológicos do livro The Qualitative Farmer.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="qf-header">
+  <div class="qf-header-inner">
+    <div class="qf-brand">
+      <span class="qf-brand-icon" aria-hidden="true">🌱</span>
+      <div>
+        <h1>The Qualitative Farmer</h1>
+        <p class="qf-subtitle">Caderno de campo interativo</p>
+      </div>
+    </div>
+    <button id="qf-nav-toggle" class="qf-nav-toggle" aria-expanded="false" aria-controls="qf-sidebar">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="qf-progress-wrap" aria-label="Progresso geral das checklists">
+    <div class="qf-progress-track">
+      <div id="qf-progress-fill" class="qf-progress-fill"></div>
+    </div>
+    <span id="qf-progress-label" class="qf-progress-label">0% da checklist concluída</span>
+  </div>
+</header>
+
+<div class="qf-layout">
+  <nav id="qf-sidebar" class="qf-sidebar">
+    <ul id="qf-nav-list" class="qf-nav-list"></ul>
+    <div class="qf-sidebar-actions">
+      <button id="qf-export-btn" class="qf-btn qf-btn-secondary">Exportar as minhas respostas</button>
+      <button id="qf-reset-btn" class="qf-btn qf-btn-ghost">Limpar tudo</button>
+    </div>
+  </nav>
+
+  <main id="qf-main" class="qf-main" tabindex="-1"></main>
+</div>
+
+<footer class="qf-footer">
+  <p>Baseado no livro <em>The Qualitative Farmer</em>, de António Pedro Costa. As respostas ficam guardadas apenas neste navegador — nada é enviado para qualquer servidor.</p>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
