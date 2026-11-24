@@ -93,7 +93,7 @@
       btn.id = "qf-nav-btn-" + ci;
 
       var label = document.createElement("span");
-      label.textContent = ch.title.replace(/^Cap[ií]tulo\s+\d+\s*---\s*/, "").replace(/^Epílogo\s*---\s*/, "");
+      label.textContent = ch.title.replace(/^Cap[ií]tulo\s+\d+\s*(?:---|—)\s*/, "").replace(/^Epílogo\s*(?:---|—)\s*/, "");
 
       var kicker = ch.title.match(/^(Capítulo\s+\d+|Epílogo)/);
       var prefix = kicker ? kicker[1] : "";
@@ -300,7 +300,7 @@
     var main = document.getElementById("qf-main");
     main.innerHTML = "";
 
-    var kickerMatch = ch.title.match(/^(Capítulo\s+\d+|Epílogo)\s*---\s*(.*)$/);
+    var kickerMatch = ch.title.match(/^(Capítulo\s+\d+|Epílogo)\s*(?:---|—)\s*(.*)$/);
     var kicker = document.createElement("p");
     kicker.className = "qf-chapter-kicker";
     kicker.textContent = kickerMatch ? kickerMatch[1] : "";
@@ -311,17 +311,29 @@
     h1.textContent = kickerMatch ? kickerMatch[2] : ch.title;
     main.appendChild(h1);
 
-    var intro = document.createElement("p");
-    intro.className = "qf-intro";
-    intro.textContent = ch.intro;
-    main.appendChild(intro);
+    var bodyWrap = document.createElement("div");
+    bodyWrap.className = "qf-body";
+    (ch.full_text || []).forEach(function (block) {
+      if (block.type === "h") {
+        var hh = document.createElement("h2");
+        hh.className = "qf-body-heading";
+        hh.textContent = block.text;
+        bodyWrap.appendChild(hh);
+      } else {
+        var pp = document.createElement("p");
+        pp.className = "qf-body-p";
+        pp.textContent = block.text;
+        bodyWrap.appendChild(pp);
+      }
+    });
+    main.appendChild(bodyWrap);
 
-    // Paradigm assistant goes right after the intro of Chapter 1
-    if (/^Capítulo\s+1\s*---/.test(ch.title)) {
+    // Paradigm assistant goes right after the full text of Chapter 1
+    if (/^Capítulo\s+1\s*(?:---|—)/.test(ch.title)) {
       renderParadigmAssistant(main);
     }
-    // Method assistant goes right after the intro of Chapter 4
-    if (/^Capítulo\s+4\s*---/.test(ch.title)) {
+    // Method assistant goes right after the full text of Chapter 4
+    if (/^Capítulo\s+4\s*(?:---|—)/.test(ch.title)) {
       renderMethodAssistant(main);
     }
 
@@ -404,6 +416,42 @@
       main.appendChild(clSection);
     }
 
+    if (ch.references && ch.references.length) {
+      var refSection = document.createElement("div");
+      refSection.className = "qf-section qf-references";
+      var refH2 = document.createElement("h2");
+      refH2.textContent = "Referências";
+      refSection.appendChild(refH2);
+      var refList = document.createElement("ul");
+      refList.className = "qf-ref-list";
+      ch.references.forEach(function (r) {
+        var li = document.createElement("li");
+        li.textContent = r;
+        refList.appendChild(li);
+      });
+      refSection.appendChild(refList);
+      main.appendChild(refSection);
+    }
+
+    if (ch.appendix && ch.appendix.length) {
+      var appWrap = document.createElement("div");
+      appWrap.className = "qf-body qf-appendix";
+      ch.appendix.forEach(function (block) {
+        if (block.type === "h") {
+          var ahh = document.createElement("h2");
+          ahh.className = "qf-body-heading";
+          ahh.textContent = block.text;
+          appWrap.appendChild(ahh);
+        } else {
+          var app2 = document.createElement("p");
+          app2.className = "qf-body-p";
+          app2.textContent = block.text;
+          appWrap.appendChild(app2);
+        }
+      });
+      main.appendChild(appWrap);
+    }
+
     main.focus();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -435,7 +483,7 @@
     lines.push("Exportado em " + new Date().toLocaleString("pt-PT"));
     lines.push("");
     CHAPTERS.forEach(function (ch, ci) {
-      lines.push("## " + ch.title.replace(/---/, "—"));
+      lines.push("## " + ch.title.replace(/\s*---\s*/, " — "));
       lines.push("");
       if (ch.exercises && ch.exercises.length) {
         ch.exercises.forEach(function (ex, ei) {
